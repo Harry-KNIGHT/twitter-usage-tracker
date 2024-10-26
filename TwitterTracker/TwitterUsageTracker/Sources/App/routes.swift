@@ -12,6 +12,10 @@ func routes(_ app: Application) throws {
     app.get("hello") { req async -> String in
         "Hello, world!"
     }
+
+    app.get("api", "twitter-usage") { req -> EventLoopFuture<[TwitterUsage]> in
+        return TwitterUsage.query(on: req.db).all()
+    }
 }
 
 func incrementTwitterCounter(for userId: String, on req: Request) async throws {

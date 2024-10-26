@@ -1,11 +1,12 @@
 import Fluent
 import Foundation
 import struct Foundation.UUID
+import Vapor
 
 /// Property wrappers interact poorly with `Sendable` checking, causing a warning for the `@ID` property
 /// It is recommended you write your model with sendability checking on and then suppress the warning
 /// afterwards with `@unchecked Sendable`.
-final class TwitterUsage: Model, @unchecked Sendable {
+final class TwitterUsage: Model, Content, @unchecked Sendable {
     static let schema = "twitter_usage"
     
     @ID(key: .id)

@@ -3,5 +3,5 @@ import Vapor
 
 struct TwitterUsageDTO: Content {
     var userId: String
-    var date: Date
+    var date: Date = Date()
 }
