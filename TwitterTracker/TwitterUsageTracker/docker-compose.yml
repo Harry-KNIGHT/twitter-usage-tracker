@@ -24,25 +24,65 @@ services:
       context: .
     environment:
       <<: *shared_environment
+      # Ajout des variables d'environnement pour la base de données
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: vapor_database
+      DATABASE_USERNAME: vapor_user
+      DATABASE_PASSWORD: vapor_password
     ports:
       - '8080:8080'
-    # user: '0' # uncomment to run as root for testing purposes even though Dockerfile defines 'vapor' user.
+    depends_on:
+      - db   # Assure que le conteneur db est lancé avant app
     command: ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
+
+  # Service pour les migrations
   migrate:
     image: twitter-usage-tracker:latest
     build:
       context: .
     environment:
       <<: *shared_environment
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: vapor_database
+      DATABASE_USERNAME: vapor_user
+      DATABASE_PASSWORD: vapor_password
+    depends_on:
+      - db
     command: ["migrate", "--yes"]
     deploy:
       replicas: 0
+
+  # Service pour le rollback des migrations
   revert:
     image: twitter-usage-tracker:latest
     build:
       context: .
     environment:
       <<: *shared_environment
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: vapor_database
+      DATABASE_USERNAME: vapor_user
+      DATABASE_PASSWORD: vapor_password
+    depends_on:
+      - db
     command: ["migrate", "--revert", "--yes"]
     deploy:
       replicas: 0
+
+  # Service PostgreSQL
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: vapor_user
+      POSTGRES_PASSWORD: vapor_password
+      POSTGRES_DB: vapor_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
