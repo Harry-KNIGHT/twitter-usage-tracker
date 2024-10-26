@@ -23,7 +23,13 @@ func routes(_ app: Application) throws {
             .map { usages in
                 usages.reduce(0) { $0 + $1.count }
             }
-    }   
+    }
+    
+    app.delete("api", "twitter-usage", "clear") { req -> EventLoopFuture<HTTPStatus> in
+        return TwitterUsage.query(on: req.db)
+            .delete()
+            .map { .ok }
+    }
 }
 
 func incrementTwitterCounter(for userId: String, on req: Request) async throws {
