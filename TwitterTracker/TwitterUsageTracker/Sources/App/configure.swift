@@ -5,12 +5,14 @@ import Vapor
 
 // configures your application
 public func configure(_ app: Application) async throws {
-    let hostname = Environment.get("DATABASE_HOST") ?? "localhost"
-    let port = Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? 5432
-    let username = Environment.get("DATABASE_USERNAME") ?? "vapor_user"
-    let password = Environment.get("DATABASE_PASSWORD") ?? "vapor_password"
-    let database = Environment.get("DATABASE_NAME") ?? "vapor_database"
-
+    guard let hostname = Environment.get("DATABASE_HOST"),
+          let portString = Environment.get("DATABASE_PORT"),
+          let port = Int(portString),
+          let username = Environment.get("DATABASE_USERNAME"),
+          let password = Environment.get("DATABASE_PASSWORD"),
+          let database = Environment.get("DATABASE_NAME") else {
+        fatalError("Database environment variables not set")
+    }
     app.databases.use(.postgres(
         hostname: hostname,
         port: port,
