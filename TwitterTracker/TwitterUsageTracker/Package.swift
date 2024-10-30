@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "TwitterUsageTracker",
-    platforms: [.iOS(.v17), .macOS(.v13)],
+    platforms: [.iOS(.v13), .macOS(.v13)],
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),
